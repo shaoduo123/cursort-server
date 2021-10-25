@@ -23,7 +23,7 @@ public enum ResultStatus {
     FAILED_FILE_FLODER_EXIST(15,"文件已经存在，请更换名称"),
     FAILED_FILE_EXIST(16,"文件已经存在"),
     FAILED_FILE_FLODER_NAME_EMPTY(17,"文件名不能为空"),
-
+    FAILED_FILE_FLODER_ID_EMPTY(18,"文件指定不正确，或者未指定文件"),
     FAILED_NOT_LOGIN(401,"您还未登陆请先登陆"),
 
     SUCCESS_CAPTCHA_SEND(11,"验证码发送成功");

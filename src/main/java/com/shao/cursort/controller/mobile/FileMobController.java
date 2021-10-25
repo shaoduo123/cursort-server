@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.Assert;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.shao.cursort.result.ResultStatus.FAILED_FILE_FLODER_NAME_EMPTY;
@@ -73,9 +74,9 @@ public class FileMobController {
         if(map.get("name") == null){
             return new Result(FAILED_FILE_FLODER_NAME_EMPTY) ;
         }else{
-           if(map.get("name").toString().equals("")){
-               return new Result(FAILED_FILE_FLODER_NAME_EMPTY) ;
-           }
+            if(map.get("name").toString().equals("")){
+                return new Result(FAILED_FILE_FLODER_NAME_EMPTY) ;
+            }
         }
         if(map.get("father")!=null){
             if(map.get("father").toString().equals("")){
@@ -95,9 +96,9 @@ public class FileMobController {
     @RequestMapping(value = "/rename",method = RequestMethod.GET)
     @Authorization
     public @ResponseBody
-    Result rename(@CurrentUser User user, @CurrentFolder File currFile,String fileId, String newName){
+    Result rename(@CurrentUser User user, String father,String fileId, String newName){
 
-        return  fileService.rename(currFile.getId(),fileId,user.getId(),newName) ;
+        return  fileService.rename(father,fileId,user.getId(),newName) ;
     }
 
 
@@ -108,14 +109,15 @@ public class FileMobController {
         return  fileService.delFile(fileId);
     }
 
-    @RequestMapping(value = "/dels",method = RequestMethod.GET)
+
+    @RequestMapping(value = "/dels",method = RequestMethod.POST)
     @Authorization
     public @ResponseBody
-    Result dels(String  ids){
-        String ids1 [] = ids.split(",");
+    Result del1s(@RequestBody  Map map){
+        List<String> ids  = (List<String>) map.get("ids");
 
-        for (String id:ids1
-             ) {
+        for (String id:ids
+        ) {
             fileService.delFile(id);
         }
         return new Result();
@@ -156,13 +158,16 @@ public class FileMobController {
 
 
 
-    @RequestMapping(value = "/copys",method = RequestMethod.GET)
+
+
+    @RequestMapping(value = "/copys",method = RequestMethod.POST)
     @Authorization
     public @ResponseBody
-    Result copys(String sourceFileIds,String toFolderId){
-        String sourceFileIdArray [] = sourceFileIds.split(",");
-        for (String sourceFileId: sourceFileIdArray
-             ) {
+    Result copys(@RequestBody Map map){
+        List<String> sourceFileIds = (List<String>) map.get("sourceFileIds");
+        String toFolderId = map.get("toFolderId").toString() ;
+        for (String sourceFileId: sourceFileIds
+        ) {
             fileService.copyFile(sourceFileId,toFolderId);
         }
 

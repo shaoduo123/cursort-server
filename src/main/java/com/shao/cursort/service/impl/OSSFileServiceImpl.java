@@ -259,7 +259,9 @@ public class OSSFileServiceImpl implements FileService {
 
     @Override
     public Result rename(String currFileId,String fileId,long userId, String newName) {
-
+        if("".equals(currFileId)||"".equals(fileId)){
+            return new Result(FAILED_FILE_FLODER_ID_EMPTY);
+        }
         Example e = new Example(File.class) ;
         Example.Criteria c = e.createCriteria() ;
         c.andEqualTo("father",currFileId) ;
