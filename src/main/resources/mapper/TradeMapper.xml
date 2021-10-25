@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shao.cursort.mapper.TradeMapper">
+    <resultMap id="baseMap" type="com.shao.cursort.pojo.User">
+        <result column="ID" jdbcType="INTEGER" property="id" />
+        <result column="AMOUNT" jdbcType="VARCHAR" property="amount" />
+        <result column="AFTER_AMOUNT" jdbcType="VARCHAR" property="afterAmount" />
+        <result column="TIME" jdbcType="VARCHAR" property="time" />
+        <result column="USER_ID" jdbcType="INTEGER" property="userId" />
+        <result column="TYPE" jdbcType="INTEGER" property="type" />
+    </resultMap>
+
+
+    <!--通过用户id查询余额-->
+    <select id="getBalanceByUserId"  resultType="String">
+        select sum(case type when  '充值' THEN  CONCAT("+",amount)
+            when '消费' THEN CONCAT("-",amount) end ) as balance
+        from trade where user_id = #{userId}
+    </select>
+
+<!--    <select id="getUserById" parameterType="long" resultMap="baseMap">-->
+<!--        select * from user where id = #{id}-->
+<!--    </select>-->
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shao.cursort.mapper.UserMapper">
+    <resultMap id="baseMap" type="com.shao.cursort.pojo.User">
+        <result column="ID" jdbcType="INTEGER" property="id" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+        <result column="MAIL" jdbcType="VARCHAR" property="mail" />
+        <result column="VIP" jdbcType="INTEGER" property="vip" />
+        <result column="CREATE_TIME" jdbcType="VARCHAR" property="createTime" />
+        <result column="BALANCE" jdbcType="VARCHAR" property="balance" />
+
+    </resultMap>
+    <insert id="addUser" parameterType="com.shao.cursort.pojo.User" >
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != 0">
+                ID,
+            </if>
+            <if test="name != null">
+                NAME,
+            </if>
+            <if test="phone != null">
+                PHONE,
+            </if>
+            <if test="mail != null">
+                MAIL,
+            </if>
+            <if test="vip != 0">
+                VIP,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != 0">
+                #{ID,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{PHONE,jdbcType=VARCHAR},
+            </if>
+            <if test="vip != 0">
+                #{VIP,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="getUserByNameOrPhone" parameterType="String" resultMap="baseMap">
+        select * from user where name = #{userName} or phone=#{18722688087}
+    </select>
+    <select id="getUserByPhone" parameterType="String" resultMap="baseMap">
+        select * from user where id = ( select max(id) from user where phone = #{phone} )
+    </select>
+    <select id="getUserById" parameterType="long" resultMap="baseMap">
+        select * from user where id = #{id}
+    </select>
+</mapper>

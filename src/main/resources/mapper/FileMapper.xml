@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shao.cursort.mapper.FileMapper">
+    <resultMap id="baseMap" type="com.shao.cursort.pojo.File">
+        <result column="ID" jdbcType="VARCHAR" property="id" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="FATHER" jdbcType="VARCHAR" property="father" />
+        <result column="USER_ID" jdbcType="INTEGER" property="user_id" />
+        <result column="PATH" jdbcType="VARCHAR" property="path" />
+        <result column="URL" jdbcType="VARCHAR" property="url" />
+        <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+</mapper>
