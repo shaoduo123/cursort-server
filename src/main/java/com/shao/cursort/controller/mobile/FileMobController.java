@@ -57,7 +57,11 @@ public class FileMobController {
         Example currFileExample = new Example(File.class) ;
         Example.Criteria currFolderCri = currFileExample.createCriteria() ;
         currFolderCri.andEqualTo("userId",user.getId()) ;
-        currFolderCri.andEqualTo("father",father);
+        if(("").equals(father)){
+            currFolderCri.andIsNull("father");
+        }else{
+            currFolderCri.andEqualTo("father",father);
+        }
         File folder =  fileMapper.selectOneByExample(currFileExample);
         return  fileService.upload(user.getId(),file,folder) ;
     }
