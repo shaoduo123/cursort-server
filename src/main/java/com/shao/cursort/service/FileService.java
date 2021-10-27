@@ -18,5 +18,6 @@ public interface FileService {
     public Result listFile(String folderId,long userId,int page ,int limit ) ;
     public Result getRootFloder(long userId) ;
     public Result rename(String fatherId,String fileId,long userId,String name) ;
+    public Result zip(long userId,List<String> ids) ;
 
 }

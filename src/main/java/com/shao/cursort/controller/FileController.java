@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.util.Assert;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.shao.cursort.result.ResultStatus.SUCCESS;
@@ -100,12 +102,6 @@ public class FileController {
         return  fileService.listFile(fileId,user.getId(),page,count) ;
     }
 
-//    @RequestMapping(value = "/listCurr",method = RequestMethod.GET)
-//    @Authorization
-//    public @ResponseBody
-//    Result listCurrFloder(@CurrentFolder File currFloder,int page,int count ){
-//        return  fileService.listFile(currFloder.getId(),page,count) ;
-//    }
 
     @RequestMapping(value = "/getRoot",method = RequestMethod.GET)
     @Authorization
@@ -154,19 +150,17 @@ public class FileController {
     }
 
 
+    @RequestMapping(value = "/zip",method = RequestMethod.GET)
+    @Authorization
+    public @ResponseBody
+    Result zio(@RequestBody  Map map){
+        Assert.notNull (map.get("ids"), "username can not be empty");
+        Assert.notNull (map.get("userId"), "userId can not be empty");
+        List<String> ids  = (List<String>) map.get("ids");
 
 
+        return new Result();
 
-
-
-//    @RequestMapping(value = "/upload",method = RequestMethod.POST)
-//    @Authorization
-//    public @ResponseBody
-//    Result upload1(@RequestParam("file") MultipartFile file, @CurrentUser User user){
-//        //fileService.upload(user.getId(),file,folder) ;
-//        System.out.println("fileupload");
-//        return  new Result() ;
-//    }
-
+    }
 
 }
