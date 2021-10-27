@@ -57,6 +57,7 @@ public class FileMobController {
         Example currFileExample = new Example(File.class) ;
         Example.Criteria currFolderCri = currFileExample.createCriteria() ;
         currFolderCri.andEqualTo("userId",user.getId()) ;
+
         if(("").equals(father)){
             currFolderCri.andIsNull("father");
         }else{
