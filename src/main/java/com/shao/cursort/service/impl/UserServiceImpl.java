@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result login(String userName, String passWord) throws BaseException {
-        User user = userMapper.getUserByNameOrPhone(userName).get(0) ;
+        User user = userMapper.getUserByNameOrPhone(userName) ;
         if (user == null || // 未注册
                 !user.getPassword().equals (passWord)) { // 密码错误
             // 提示用户名或密码错误

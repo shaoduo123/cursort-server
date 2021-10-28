@@ -10,11 +10,11 @@ import java.util.List;
 @Repository
 public interface UserMapper extends BaseMapper<User> {
 
-    public List<User> getUserByNameOrPhone(String nameOrPhone) ;
+    public User getUserByNameOrPhone(String nameOrPhone) ;
 
     public User getUserByPhone(String phone) ;
 
-    public List<User> getUserById(long id) ;
+    public User getUserById(long id) ;
 
     public int addUser(User user) ;
 
