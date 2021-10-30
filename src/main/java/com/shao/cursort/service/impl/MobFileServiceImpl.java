@@ -8,15 +8,14 @@ import com.shao.cursort.result.Result;
 import com.shao.cursort.service.MobFileService;
 import com.shao.cursort.utils.Constants;
 import com.shao.cursort.utils.OSSUtil;
+import com.shao.cursort.utils.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class MobFileServiceImpl implements MobFileService {
@@ -83,5 +82,29 @@ public class MobFileServiceImpl implements MobFileService {
         PageInfo<File> info = new PageInfo<>(files) ;
         System.out.println("totalCount: "+info.getTotal());
         return new Result(result,info.getTotal());
+    }
+
+    @Override
+    public boolean createRoot(long userId) {
+        //定义默认的用户目录
+        String defaultPath = uploadPath+ userId+ java.io.File.separator+"files"+java.io.File.separator;
+        String currenFolderId = "" ;
+        //查找该用户数据库中是否有目录记录，没有则创建，并默认为主目录
+        Example folderExam = new Example(File.class);
+        Example.Criteria folderCri = folderExam.createCriteria() ;
+        folderCri.andEqualTo("userId",userId) ;
+        if(fileMapper.selectByExample(folderExam).size()<=0 ){
+            //没有主目录和任何文件
+            currenFolderId = UUIDUtil.UUID() ;
+            File file = new File();
+            file.setPath(defaultPath);
+            file.setName("/");
+            file.setId(currenFolderId);
+            file.setUserId(userId);
+            file.setType(Constants.FILE_TYPE_FOLDER);
+            file.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            fileMapper.insertSelective(file);
+        }
+        return  true ;
     }
 }

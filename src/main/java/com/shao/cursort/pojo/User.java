@@ -38,6 +38,9 @@ public class User {
 
     private transient String tokens ;
 
+    @Column
+    private  String rootId ;
+
     public long getId() {
         return id;
     }
@@ -108,5 +111,13 @@ public class User {
 
     public void setTokens(String tokens) {
         this.tokens = tokens;
+    }
+
+    public String getRootId() {
+        return rootId;
+    }
+
+    public void setRootId(String rootId) {
+        this.rootId = rootId;
     }
 }

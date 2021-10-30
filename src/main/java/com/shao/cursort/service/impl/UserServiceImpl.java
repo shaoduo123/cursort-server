@@ -1,5 +1,7 @@
 package com.shao.cursort.service.impl;
 
+import com.shao.cursort.service.FileService;
+import com.shao.cursort.service.MobFileService;
 import com.shao.cursort.token.TokenManager;
 import com.shao.cursort.token.TokenModel;
 import com.shao.cursort.exception.BaseException;
@@ -27,6 +29,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper ;
+
+    @Autowired
+    private MobFileService mobFileService ;
+
 
     @Autowired
     private TokenManager tokenManager ;
@@ -107,6 +113,12 @@ public class UserServiceImpl implements UserService {
         user.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:SS ").format(new Date()));
         user.setBalance(0+"");
         userMapper.insert(user) ;
+        //给用户初始化文件根目录
+        Example  userExample1 = new Example(User.class) ;
+        Example.Criteria c1 =  userExample1.createCriteria() ;
+        c1.andEqualTo("phone",user.getPhone());
+        User user1 =  userMapper.selectOneByExample(userExample1) ;
+        mobFileService.createRoot(user1.getId()) ;
         return new Result(SUCCESS);
     }
 
