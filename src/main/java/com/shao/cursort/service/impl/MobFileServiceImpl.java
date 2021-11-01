@@ -73,6 +73,7 @@ public class MobFileServiceImpl implements MobFileService {
             map.put("amount",file.getSize()) ;
             map.put("fileId",file.getId()) ;
             map.put("preImg",file.getPreUrl()) ;
+            map.put("img",file.getUrl());
             map.put("flag",file.getType().equals(Constants.FILE_TYPE_FOLDER)?"0":"1");
             maps.add(map);
         }

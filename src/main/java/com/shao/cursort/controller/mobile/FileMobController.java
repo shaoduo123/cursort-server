@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.Assert;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -193,6 +194,17 @@ public class FileMobController {
         }
 
         return  new Result();
+    }
+
+
+    @RequestMapping(value = "/zip",method = RequestMethod.POST)
+    @Authorization
+    public @ResponseBody
+    Result zip(@CurrentUser User user, @RequestBody Map map, HttpServletResponse response){
+        List<String> ids = (List<String>) map.get("fileIds");
+
+        return fileService.zip(user.getId(),ids,response);
+
     }
 
 

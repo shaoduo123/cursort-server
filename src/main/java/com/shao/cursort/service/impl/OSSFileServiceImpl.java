@@ -22,10 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -297,7 +295,12 @@ public class OSSFileServiceImpl implements FileService {
     }
 
     @Override
-    public Result zip(long userId,List<String> ids) {
+    public Result zip(long userId, List<String> ids, HttpServletResponse response) {
+        OutputStream out = null ;
+        FileInputStream fis = null ;
+        OSS oss = null ;
+
+
         try{
 
             //查询所选文件内容
@@ -305,7 +308,7 @@ public class OSSFileServiceImpl implements FileService {
             Example.Criteria c= e.createCriteria() ;
             for (String id: ids
                  ) {
-                c.orEqualTo(id) ;
+                c.orEqualTo("id",id) ;
             }
             List<File> toZipFiles  =  fileMapper.selectByExample(e) ;
 
@@ -320,7 +323,7 @@ public class OSSFileServiceImpl implements FileService {
        // String zipName  ="testZip" ;
         OSSUtil ossUtil = new OSSUtil(endpoint, accessKeyId, accessKeySecret, bucketName, uploadPath);
         //  ossUtil.deleteFile(bucketName,"root/1/files/two/");
-        OSS oss = ossUtil.getOSSClient();
+         oss = ossUtil.getOSSClient();
         //  CopyObjectResult result = oss.copyObject(bucketName, "root/1/files/one/", bucketName, "root/1/files/four/");
         java.io.File zipFile = java.io.File.createTempFile("abc", ".zip");
         FileOutputStream f = new FileOutputStream(zipFile);
@@ -365,22 +368,45 @@ public class OSSFileServiceImpl implements FileService {
         }
 
             }
-        zos.close();
-        FileInputStream fis = new FileInputStream(zipFile);
+            zos.close();
+            fis = new FileInputStream(zipFile);
         //重新上传到OSS里 暂时不要了
-        oss.putObject(bucketName, "root/"+userId+"/zip/" + father.getName() + ".zip", fis);
-        oss.shutdown();
-        // 关闭流
-        fis.close();
-        oss.shutdown();
-        // 删除临时文件
-        zipFile.delete();
+            oss.putObject(bucketName, "root/"+userId+"/zip/" + (father.getName().equals("/")?"打包文件":father.getName())+ ".zip", fis);
+            oss.shutdown();
 
 
+        //数据下载
+            byte[] buffer = new byte[1024];
+            out = response.getOutputStream();
+            int len = 0 ;
+            while((len = fis.read(buffer))>0){
+                out.write(buffer,0,len);
+            }
+
+
+
+            // 删除临时文件
+            zipFile.delete();
 
         }catch (Exception e){
             e.printStackTrace();
-            return new Result();
+            return new Result(FAILED_FILE_ZIP_ERROR);
+        }finally {
+            try {
+                // 关闭流
+                if (out != null) {
+                    out.close();
+                }
+                if (fis != null) {
+                    fis.close();
+                }
+                if (oss != null) {
+                    oss.shutdown();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                return new Result(FAILED_FILE_ZIP_ERROR);
+            }
         }
         return new Result(SUCCESS);
     }

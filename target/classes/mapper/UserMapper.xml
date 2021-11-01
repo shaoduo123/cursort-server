@@ -8,6 +8,7 @@
         <result column="MAIL" jdbcType="VARCHAR" property="mail" />
         <result column="VIP" jdbcType="INTEGER" property="vip" />
         <result column="CREATE_TIME" jdbcType="VARCHAR" property="createTime" />
+        <result column="ROOT_ID" jdbcType="VARCHAR" property="rootId"/>
         <result column="BALANCE" jdbcType="VARCHAR" property="balance" />
 
     </resultMap>
@@ -46,10 +47,11 @@
         </trim>
     </insert>
     <select id="getUserByNameOrPhone" parameterType="String" resultMap="baseMap">
-        select * from user where name = #{userName} or phone=#{18722688087}
+        select u.*,f.id as ROOT_ID  from user u left join file f on u.id = f.user_id where (u.name = #{userName} or u.phone=#{userName})
+        and f.father is null ;
     </select>
     <select id="getUserByPhone" parameterType="String" resultMap="baseMap">
-        select * from user where id = ( select max(id) from user where phone = #{phone} )
+        select u.*,f.id as ROOT_ID  from user u left join file f on u.id = f.user_id  where u.id = ( select max(id) from user where phone = #{phone} )   and f.father is null ;
     </select>
     <select id="getUserById" parameterType="long" resultMap="baseMap">
         select * from user where id = #{id}
