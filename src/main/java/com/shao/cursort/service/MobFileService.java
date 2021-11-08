@@ -6,6 +6,8 @@ public interface MobFileService {
 
     public Result listFile(String folderId, long userId, int page , int limit ) ;
 
+   // public Result
+
     public boolean createRoot(long userId);
 
 }

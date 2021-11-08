@@ -133,6 +133,13 @@ public class FileMobController {
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @Authorization
     public @ResponseBody
+    Result list(@CurrentUser User user , String fileId,int page,int count ){
+        return  mobFileService.listFile(fileId,user.getId(),page,count) ;
+    }
+
+    @RequestMapping(value = "/query",method = RequestMethod.GET)
+    @Authorization
+    public @ResponseBody
     Result list(@CurrentUser User user , String fileId,int page,int count,String keyword ){
         return  mobFileService.listFile(fileId,user.getId(),page,count) ;
     }

@@ -326,12 +326,12 @@ public class OSSFileServiceImpl implements FileService {
          oss = ossUtil.getOSSClient();
         //  CopyObjectResult result = oss.copyObject(bucketName, "root/1/files/one/", bucketName, "root/1/files/four/");
         java.io.File zipFile = java.io.File.createTempFile("abc", ".zip");
-        FileOutputStream f = new FileOutputStream(zipFile);
+        FileOutputStream fos = new FileOutputStream(zipFile);
         /**
          * 作用是为任何OutputStream产生校验和
          * 第一个参数是制定产生校验和的输出流，第二个参数是指定Checksum的类型 （Adler32（较快）和CRC32两种）
          */
-        CheckedOutputStream csum = new CheckedOutputStream(f, new Adler32());
+        CheckedOutputStream csum = new CheckedOutputStream(fos, new Adler32());
         // 用于将数据压缩成Zip文件格式
         ZipOutputStream zos = new ZipOutputStream(csum);
 
@@ -368,7 +368,7 @@ public class OSSFileServiceImpl implements FileService {
         }
 
             }
-            zos.close();
+
             fis = new FileInputStream(zipFile);
         //重新上传到OSS里 暂时不要了
             oss.putObject(bucketName, "root/"+userId+"/zip/" + (father.getName().equals("/")?"打包文件":father.getName())+ ".zip", fis);
@@ -376,17 +376,34 @@ public class OSSFileServiceImpl implements FileService {
 
 
         //数据下载
-            byte[] buffer = new byte[1024];
+   /*         byte[] buffer = new byte[1024];
             out = response.getOutputStream();
             int len = 0 ;
             while((len = fis.read(buffer))>0){
                 out.write(buffer,0,len);
-            }
+            }*/
 
+            InputStream newFis = new BufferedInputStream(new FileInputStream(zipFile));
+            byte[] buffer = new byte[newFis.available()];
+            newFis.read(buffer);
+            //fis.close();
+            // 清空response
+            response.reset();
+            // 设置response的Header //ISO-8859-1可以显示中文的文件名
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String((father.getName().equals("/")?"打包文件":father.getName()).getBytes(),"ISO-8859-1"));
+            response.addHeader("Content-Length", "" + zipFile.length());
+            out = new BufferedOutputStream(response.getOutputStream());
+            //response.setContentType("application/octet-stream");
+            out.write(buffer);
+            out.flush();
+
+
+            zos.close();
+            newFis.close();
 
 
             // 删除临时文件
-            zipFile.delete();
+           // zipFile.delete();
 
         }catch (Exception e){
             e.printStackTrace();
